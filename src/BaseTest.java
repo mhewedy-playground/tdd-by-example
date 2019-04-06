@@ -2,22 +2,25 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-public class BaseTest {
-    
+public abstract class BaseTest {
+
+    private AtomicInteger failureCount = new AtomicInteger();
+
     protected void run() {
         Stream.of(this.getClass().getDeclaredMethods())
-        .filter(it -> it.isAnnotationPresent(Test.class))
-        .forEach(it -> {
-            try {
-                it.invoke(new MoneyTest());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        System.out.println("FINISH");
+                .filter(it -> it.isAnnotationPresent(Test.class))
+                .forEach(it -> {
+                    try {
+                        System.out.printf("Running: %s\n", it.getName());
+                        it.invoke(this);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                });
+        System.out.printf("Finish Tests, Failure: %d\n", failureCount.get());
     }
 
     @Target(ElementType.METHOD)
@@ -28,25 +31,34 @@ public class BaseTest {
 
     protected void assertEquals(Object first, Object second) {
         if (!first.equals(second)) {
-            System.out.println("Error in expression, " + first + " is not equal to " + second);
+            reportFailure("Error in expression, " + first + " is not equal to " + second);
         } else {
-            System.out.println("PASS");
+            reportSuccess();
         }
     }
 
     protected void assertTrue(boolean toBeTrue) {
         if (!toBeTrue) {
-            System.out.println("Error in expression, it should be true but its value is false");
+            reportFailure("Error in expression, it should be true but its value is false");
         } else {
-            System.out.println("PASS");
+            reportSuccess();
         }
     }
 
     protected void assertFalse(boolean toBeFalse) {
         if (toBeFalse) {
-            System.out.println("Error in expression, it should be false but its value is true");
+            reportFailure("Error in expression, it should be false but its value is true");
         } else {
-            System.out.println("PASS");
+            reportSuccess();
         }
+    }
+
+    private void reportSuccess() {
+    }
+
+    private void reportFailure(String message) {
+        System.out.print("\t");
+        System.out.println(message);
+        failureCount.incrementAndGet();
     }
 }
