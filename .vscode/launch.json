@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - MoneyTest",
+            "request": "launch",
+            "mainClass": "MoneyTest"
+        }
+    ]
+}
