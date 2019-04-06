@@ -1,9 +1,9 @@
-public class Money implements Expression{
+public class Money implements Expression {
 
-    private int amount;
-    private String currency;
+    int amount;
+    String currency;
 
-    private Money(int amount, String currency) {
+    Money(int amount, String currency) {
         this.amount = amount;
         this.currency = currency;
     }
@@ -25,15 +25,23 @@ public class Money implements Expression{
     }
 
     public Expression plus(Money addend) {
-        return new Money(this.amount + addend.amount, this.currency);
-	}
+        return new Sum(this, addend);
+    }
 
     public boolean equals(Object object) {
+        if (object == null || !(object instanceof Money)) {
+            return false;
+        }
         Money money = (Money) object;
         return amount == money.amount && currency().equals(money.currency());
     }
 
     public String toString() {
         return this.amount + " " + this.currency;
+    }
+
+    @Override
+    public Money reduce(String currency) {
+        return this;
     }
 }
