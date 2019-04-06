@@ -17,7 +17,8 @@ public abstract class BaseTest {
                         System.out.printf("Running: %s\n", it.getName());
                         it.invoke(this);
                     } catch (Exception e) {
-                        System.out.println(e.getMessage());
+                        reportFailure(e.getMessage());
+                        e.printStackTrace();
                     }
                 });
         System.out.printf("Finish Tests, Failure: %d\n", failureCount.get());
@@ -57,8 +58,10 @@ public abstract class BaseTest {
     }
 
     private void reportFailure(String message) {
-        System.out.print("\t");
-        System.out.println(message);
+        if (message != null && message.trim().length() > 0) {
+            System.out.print("\t");
+            System.out.println(message);
+        }
         failureCount.incrementAndGet();
     }
 }
