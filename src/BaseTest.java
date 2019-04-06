@@ -9,9 +9,10 @@ public abstract class BaseTest {
 
     private AtomicInteger failureCount = new AtomicInteger();
 
-    protected void run() {
+    protected void run(String[] args) {
         Stream.of(this.getClass().getDeclaredMethods())
                 .filter(it -> it.isAnnotationPresent(Test.class))
+                .filter(it -> args.length == 0 || it.getName().equalsIgnoreCase(args[0]))
                 .forEach(it -> {
                     try {
                         System.out.printf("Running: %s\n", it.getName());

@@ -2,7 +2,7 @@
 public class MoneyTest extends BaseTest {
 
     public static void main(String[] args) {
-        new MoneyTest().run();
+        new MoneyTest().run(args);
     }
 
     @Test
