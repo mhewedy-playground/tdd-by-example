@@ -1,6 +1,10 @@
 
 public class MoneyTest extends BaseTest {
 
+    public static void main(String[] args) {
+        new MoneyTest().run();
+    }
+
     @Test
     public void testEquality() {
         assertTrue(Money.dollar(5).equals(Money.dollar(5)));
@@ -27,13 +31,9 @@ public class MoneyTest extends BaseTest {
         Money dollarSum = Money.dollar(5).plus(Money.dollar(5));
         assertEquals(Money.dollar(10), dollarSum);
 
-        // trianglation
+        // triangulation
         Money francSum = Money.franc(5).plus(Money.franc(5));
         assertEquals(Money.franc(10), francSum);
-    }
-
-    public static void main(String[] args) {
-        new MoneyTest().run();
     }
 
 }
