@@ -28,7 +28,7 @@ public class MoneyTest extends BaseTest {
         assertEquals(Money.dollar(10), dollarSum);
 
         // trianglation
-        Money sumFranc = Money.franc(5).plus(Money.franc(3));
+        Money sumFranc = Money.franc(5).plus(Money.franc(5));
         assertEquals(Money.franc(10), sumFranc);
     }
 
