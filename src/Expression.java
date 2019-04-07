@@ -1,6 +1,6 @@
 public interface Expression {
 
-    Money reduce(String currency);
+    Money reduce(Bank bank, String currency);
 }
 
 class Sum implements Expression {
@@ -12,7 +12,7 @@ class Sum implements Expression {
     }
 
     @Override
-    public Money reduce(String currency) {
+    public Money reduce(Bank bank, String currency) {
         int amount = augend.amount + addend.amount;
         return new Money(amount, currency);
     }
