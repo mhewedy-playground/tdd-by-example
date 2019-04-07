@@ -2,18 +2,19 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-public abstract class BaseTest {
+public abstract class AbstractTest {
 
-    private AtomicInteger failureCount = new AtomicInteger();
+    private AtomicInteger runCount = new AtomicInteger();
+    private ConcurrentHashMap<String, Integer> failures = new ConcurrentHashMap<>();
 
     protected void run(String[] args) {
-        Stream.of(this.getClass().getDeclaredMethods())
-                .filter(it -> it.isAnnotationPresent(Test.class))
-                .filter(it -> args.length == 0 || it.getName().equalsIgnoreCase(args[0]))
-                .forEach(it -> {
+        Stream.of(this.getClass().getDeclaredMethods()).filter(it -> it.isAnnotationPresent(Test.class))
+                .filter(it -> args.length == 0 || it.getName().equalsIgnoreCase(args[0])).forEach(it -> {
+                    AbstractTest.this.runCount.incrementAndGet();
                     try {
                         System.out.printf("Running: %s\n", it.getName());
                         it.invoke(this);
@@ -22,7 +23,7 @@ public abstract class BaseTest {
                         e.printStackTrace();
                     }
                 });
-        System.out.printf("Finish Tests, Failure: %d\n", failureCount.get());
+        System.out.printf("Finish Tests, Run %d: Failure: %d\n", runCount.get(), failures.mappingCount());
     }
 
     @Target(ElementType.METHOD)
@@ -63,6 +64,9 @@ public abstract class BaseTest {
             System.out.print("\t");
             System.out.println(message);
         }
-        failureCount.incrementAndGet();
+
+        String methodName = Thread.currentThread()
+        .getStackTrace()[1].getMethodName();
+        failures.putIfAbsent(methodName, 1);
     }
 }

@@ -1,12 +1,18 @@
 public interface Expression {
 
     Money reduce(Bank bank, String currency);
+
+    Expression times(int multiplier);
+
+    default Expression plus(Expression addend) {
+        return new Sum(this, addend);
+    }
 }
 
 class Sum implements Expression {
-    Money augend, addend;
+    Expression augend, addend;
 
-    Sum(Money augend, Money addend) {
+    Sum(Expression augend, Expression addend) {
         this.augend = augend;
         this.addend = addend;
     }
@@ -16,5 +22,10 @@ class Sum implements Expression {
         Money augendReduced = augend.reduce(bank, currency);
         Money addendReduced = addend.reduce(bank, currency);
         return new Money(augendReduced.amount + addendReduced.amount, currency);
+    }
+
+    @Override
+    public Expression times(int multiplier) {
+        return new Sum(this.augend.times(multiplier), this.addend.times(multiplier));
     }
 }
